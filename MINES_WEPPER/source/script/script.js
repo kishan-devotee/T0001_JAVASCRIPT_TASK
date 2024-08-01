@@ -1,10 +1,21 @@
 
-    const boxX = 15;
-    const boxY = 10;
-    const boxSize = 60;
+    let boxX = 10;
+    let boxY = 10;
+    const boxSize = 40;
     const arr = [];
     const randomBombSpaces = [];
-    const bombCount = 10;
+    let bombCount = 99;
+    const boxContainer = document.querySelector('.container');
+
+
+    const basicMode = () => {
+        bombCount = 10;
+        boxGenerator( boxX = 8,boxY = 8)
+    }
+
+    document.querySelector('.reset-btn').addEventListener('click', () => {
+        location.reload()
+    })
 
     //Create Boxes
     const createBox = (x, y) => {
@@ -21,7 +32,8 @@
     }
     
     //Cerate Layout Of Boxes
-    const boxContainer = document.querySelector('.container');
+    
+  const boxGenerator = (boxX,boxY) => {
     for (let x = 0; x < boxX; x++) {
         for (let y = 0; y < boxY; y++) {
             const box = createBox(x, y);
@@ -29,10 +41,53 @@
             arr.push([x+1,y+1])
         }
     }
+    while (randomBombSpaces.length < bombCount) {
+        randomMines();
+        }
+  }
+
+  //box arround
+  const getBoxAround = (box) => {
+        box = box.split(",");
+        console.log(box);
+        let checker = true;
+
+        for (let i = 1; checker; i++) {
+            box = `${parseInt(box[0])},${parseInt(box[1]) - i}`;
+           
+            let ele = document.getElementsByClassName(`${box}`)
+            if (ele.innerHTML == "<span>💣</span>") {
+                checker = false;
+            }
+            ele[i-1].style.backgroundColor = "gray"
+            console.log(ele);
+        }
+ };
 
     //Box Clicker
     boxContainer.addEventListener('click',(e)=> {
-        console.log(e.target.id);
+        let clickedBox = document.getElementById(`${e.target.id}`);
+        let box = e.target.className;
+        console.log( clickedBox.innerHTML);
+           if (clickedBox.className === 'Mine') {
+            document.querySelectorAll(".Mine").forEach((boxes)=> {
+                console.log(boxes.childNodes[0]);
+                boxes.childNodes[0].style.opacity = "1";
+                boxes.style.backgroundColor = "rgba(255, 255, 255, 0.315)"
+                boxContainer.style.pointerEvents = "none";
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            })
+           }
+           if (typeof clickedBox.innerHTML == "string") {
+                clickedBox.style.color = "green"
+                clickedBox.style.backgroundColor = "gray"
+           }
+
+           if (clickedBox.innerHTML == "" ) {
+                 getBoxAround(box);
+           }
     })
 
     //Get Value For Print Number 
@@ -58,8 +113,6 @@
         } 
 
         let getEle = index.toString().length == 3 ? getThreeVal(index) : getVal(index);
-        // console.log(getEle,index);
-        
 
         if (condition == "left")  getEle[0] = +getEle[0] - 1;
         if (condition == "right")  getEle[0] = +getEle[0] + 1;
@@ -89,43 +142,35 @@
         let leftTop = document.getElementById(`${leftTopId = leftTopId.join("")}`)
         let leftBottom = document.getElementById(`${leftBottomId = leftBottomId.join("")}`)
         let rightTop = document.getElementById(`${rightTopId = rightTopId.join("")}`)
-        let rightBottom = document.getElementById(`${rightBottomId = rightBottomId.join("")}`)
-        
+        let rightBottom = document.getElementById(`${rightBottomId = rightBottomId.join("")}`) 
        
-        if (centerLeft.innerHTML != "&#128163;" )  centerLeft.innerHTML = `${centerLeft.innerHTML ? +centerLeft.innerHTML + 1 : 1}`  
-        if (centerRight.innerHTML != "&#128163;" )   centerRight.innerHTML = `${centerRight.innerHTML ? +centerRight.innerHTML + 1 : 1}`
-        if (centerTop.innerHTML != "&#128163;" )   centerTop.innerHTML = `${centerTop.innerHTML ? +centerTop.innerHTML + 1 : 1}`
-        if (centerBottom.innerHTML != "&#128163;" )   centerBottom.innerHTML = `${centerBottom.innerHTML? +centerBottom.innerHTML + 1 : 1}`
-        if (leftTop.innerHTML != "&#128163;" )   leftTop.innerHTML = `${leftTop.innerHTML ? +leftTop.innerHTML + 1 : 1}` 
-        if (rightTop.innerHTML != "&#128163;" )   rightTop.innerHTML = `${rightTop.innerHTML ? +rightTop.innerHTML + 1 : 1}` 
-        if (leftBottom.innerHTML != "&#128163;" )   leftBottom.innerHTML = `${leftBottom.innerHTML ? +leftBottom.innerHTML + 1 : 1}` 
-        if (rightBottom.innerHTML != "&#128163;" )    rightBottom.innerHTML = `${rightBottom.innerHTML ? +rightBottom.innerHTML + 1 : 1}` 
+        if (centerLeft.innerHTML != "<span>💣</span>" )  centerLeft.innerHTML = `${centerLeft.innerHTML ? +centerLeft.innerHTML : 1}`  
+        if (centerRight.innerHTML != "<span>💣</span>" )   centerRight.innerHTML = `${centerRight.innerHTML ? +centerRight.innerHTML + 1 : 1}`
+        if (centerTop.innerHTML != "<span>💣</span>" )   centerTop.innerHTML = `${centerTop.innerHTML ? +centerTop.innerHTML + 1 : 1}`
+        if (centerBottom.innerHTML != "<span>💣</span>" )   centerBottom.innerHTML = `${centerBottom.innerHTML? +centerBottom.innerHTML + 1 : 1}`
+        if (leftTop.innerHTML != "<span>💣</span>" )   leftTop.innerHTML = `${leftTop.innerHTML ? +leftTop.innerHTML + 1 : 1}` 
+        if (rightTop.innerHTML != "<span>💣</span>" )   rightTop.innerHTML = `${rightTop.innerHTML ? +rightTop.innerHTML + 1 : 1}` 
+        if (leftBottom.innerHTML != "<span>💣</span>" )   leftBottom.innerHTML = `${leftBottom.innerHTML ? +leftBottom.innerHTML + 1 : 1}` 
+        if (rightBottom.innerHTML != "<span>💣</span>" )    rightBottom.innerHTML = `${rightBottom.innerHTML ? +rightBottom.innerHTML + 1 : 1}` 
         } 
 
     //Random Bomb Generator
     const randomMines = async() => {
         try {
-         let randomIndex = Math.floor(Math.random() * Number(boxX.toString() + boxY.toString())+1);
-         let randomBombSpace = Array.from(randomIndex.toString()).join("");
-         document.getElementById(`${randomBombSpace}`).innerHTML = "<span>&#128163;</span>" 
-         if (!randomBombSpaces.includes(randomIndex) && randomIndex.toString().length >= 2) {
-         randomBombSpaces.push(randomIndex);   
-         }
-     
-         printNumber(randomIndex)
-       
-     
+            let randomIndex = Math.floor(Math.random() * Number(boxX.toString() + boxY.toString())+1);
+            let randomBombSpace = Array.from(randomIndex.toString()).join("");
+            document.getElementById(`${randomBombSpace}`).innerHTML = "<span>&#128163;</span>" 
+            document.getElementById(`${randomBombSpace}`).className = "Mine" 
+          if (!randomBombSpaces.includes(randomIndex) && randomIndex.toString().length >= 2) {
+            randomBombSpaces.push(randomIndex);   
+          }
+            printNumber(randomIndex)
         } catch (error) {
-         console.log("Error To Set Bomb",error.message);
+        //  console.log("Error To Set Bomb",error.message);
         }
-     }
-     
-     let i = 1;
-     while (randomBombSpaces.length < bombCount) {
-     randomMines()
-     i++;
-     }
+     } 
 
+//Intial Calls
 
-
+boxGenerator(boxX, boxY)
 

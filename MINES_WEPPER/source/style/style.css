@@ -17,4 +17,18 @@
     justify-content: center;
     font-size: 25px;
     font-weight: 800;
+    color: rgb(113, 193, 113);
+    user-select: none;
+}
+
+.box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40vh;
+}
+
+.container div span {
+    opacity: 0;
+    z-index: -1;
 }
